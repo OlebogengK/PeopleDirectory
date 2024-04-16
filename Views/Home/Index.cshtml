@@ -1,0 +1,77 @@
+﻿<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Directory</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>People Directory</h1>
+
+    <!-- Search form -->
+    <input type="text" id="searchInput" placeholder="Enter name...">
+    <button onclick="search()">Search</button>
+
+    <!-- Container for search results -->
+    <div id="searchResults"></div>
+
+    <!-- Container for person details -->
+    <div id="personDetails"></div>
+
+    <script>
+        // Function to perform search
+        function search() {
+            var searchTerm = document.getElementById('searchInput').value;
+            // Make AJAX request to search API endpoint
+            fetch(`/api/peopleapi/search?searchTerm=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data);
+                })
+                .catch(error => console.error('Search error:', error));
+        }
+
+        // Function to display search results
+        function displaySearchResults(results) {
+            var searchResultsDiv = document.getElementById('searchResults');
+            searchResultsDiv.innerHTML = '';
+
+            results.forEach(person => {
+                var personLink = document.createElement('a');
+                personLink.textContent = `${person.name} ${person.surname}, ${person.city}`;
+                personLink.href = '#';
+                personLink.onclick = function () {
+                    showDetails(person.id);
+                    return false;
+                };
+                searchResultsDiv.appendChild(personLink);
+                searchResultsDiv.appendChild(document.createElement('br'));
+            });
+        }
+
+        // Function to fetch and display person details
+        function showDetails(personId) {
+            // Make AJAX request to get person details by ID
+            fetch(`/api/peopleapi/${personId}`)
+                .then(response => response.json())
+                .then(person => {
+                    var detailsDiv = document.getElementById('personDetails');
+                    detailsDiv.innerHTML = '';
+
+                    var namePara = document.createElement('p');
+                    namePara.textContent = `Name: ${person.name} ${person.surname}`;
+                    detailsDiv.appendChild(namePara);
+
+                    var addressPara = document.createElement('p');
+                    addressPara.textContent = `Address: ${person.city}`;
+                    detailsDiv.appendChild(addressPara);
+
+                    // Add other details as needed
+                })
+                .catch(error => console.error('Details error:', error));
+        }
+    </script>
+</body>
+</html>
