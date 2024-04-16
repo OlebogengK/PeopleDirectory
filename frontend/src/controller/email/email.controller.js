@@ -6,7 +6,7 @@ class EmailController{
     {
         try {
             let result = await this.$http.post(`https://localhost:7024/api/email/send`, {
-                to: 'olevated@gmail.com',
+                to: 'mark@bluegrassdigital.com',
                 subject: details.subject,
                 body: `Data:\n
                 \nID: ${details.fields.id} 
